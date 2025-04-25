@@ -12,3 +12,4 @@ E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\refint\Ma
 E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.pdb
 E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.genruntimeconfig.cache
 E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ref\ManajemenBukuApp.dll
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.sourcelink.json

@@ -18,12 +18,12 @@ namespace ManajemenBukuApp
 
             // Header
             Panel header = new Panel();
-            header.BackColor = System.Drawing.Color.DarkSlateBlue;
+            header.BackColor = System.Drawing.Color.Black;
             header.Dock = DockStyle.Top;
-            header.Height = 60;
+            header.Height = 50;
 
             Label lblHeader = new Label();
-            lblHeader.Text = "📚 Manajemen Buku - Perpustakaan Sekolah";
+            lblHeader.Text = " Manajemen Buku - Perpustakaan Sekolah";
             lblHeader.ForeColor = System.Drawing.Color.White;
             lblHeader.Font = new System.Drawing.Font("Segoe UI", 16, System.Drawing.FontStyle.Bold);
             lblHeader.Dock = DockStyle.Fill;
