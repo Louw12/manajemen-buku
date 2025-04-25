@@ -1,0 +1,14 @@
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\bin\Debug\net9.0-windows\ManajemenBukuApp.exe
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\bin\Debug\net9.0-windows\ManajemenBukuApp.deps.json
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\bin\Debug\net9.0-windows\ManajemenBukuApp.runtimeconfig.json
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\bin\Debug\net9.0-windows\ManajemenBukuApp.dll
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\bin\Debug\net9.0-windows\ManajemenBukuApp.pdb
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.GeneratedMSBuildEditorConfig.editorconfig
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.AssemblyInfoInputs.cache
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.AssemblyInfo.cs
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.csproj.CoreCompileInputs.cache
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.dll
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\refint\ManajemenBukuApp.dll
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.pdb
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ManajemenBukuApp.genruntimeconfig.cache
+E:\ProjectWeb\Manajemen Buku\ManajemenBukuApp\obj\Debug\net9.0-windows\ref\ManajemenBukuApp.dll
