@@ -1,73 +1,207 @@
 using System;
+using System.Data;
+using System.Data.SQLite;
+using System.IO;
 using System.Windows.Forms;
 
-namespace ManajemenBukuApp
+namespace Manajemen_Buku
 {
     public partial class Form1 : Form
     {
+        private int selectedId = -1; // Untuk update
+
         public Form1()
         {
             InitializeComponent();
-            InitializeLayout();
+            CustomizeUI();
         }
 
-        private void InitializeLayout()
+        private void CustomizeUI()
         {
-            this.Text = "Aplikasi Manajemen Buku";
-            this.Size = new System.Drawing.Size(1200, 700);
+            // Mengubah warna dan font
+            this.BackColor = Color.LightGray;
+            this.Font = new Font("Arial", 10);
+            // Mengatur DataGridView
+            dataGridView1.BackgroundColor = Color.White;
+            dataGridView1.DefaultCellStyle.BackColor = Color.LightBlue;
+            dataGridView1.DefaultCellStyle.ForeColor = Color.Black;
+            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
+            dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
+            // Menambahkan Tooltips
+            ToolTip toolTip = new ToolTip();
+            toolTip.SetToolTip(button1, "Simpan Data Buku");
+        }
 
-            // Header
-            Panel header = new Panel();
-            header.BackColor = System.Drawing.Color.Black;
-            header.Dock = DockStyle.Top;
-            header.Height = 50;
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadData();
+        }
 
-            Label lblHeader = new Label();
-            lblHeader.Text = " Manajemen Buku - Perpustakaan Sekolah";
-            lblHeader.ForeColor = System.Drawing.Color.White;
-            lblHeader.Font = new System.Drawing.Font("Segoe UI", 16, System.Drawing.FontStyle.Bold);
-            lblHeader.Dock = DockStyle.Fill;
-            lblHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            header.Controls.Add(lblHeader);
-            this.Controls.Add(header);
-
-            // Sidebar
-            Panel sidebar = new Panel();
-            sidebar.BackColor = System.Drawing.Color.LightSteelBlue;
-            sidebar.Dock = DockStyle.Left;
-            sidebar.Width = 220;
-
-            string[] menuItems = { "Dashboard", "Data Buku", "Data Anggota", "Peminjaman", "Pengembalian", "Laporan" };
-            foreach (var item in menuItems)
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string connectionString = "Data Source=database.db;Version=3;";
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
-                Button btn = new Button();
-                btn.Text = item;
-                btn.Dock = DockStyle.Top;
-                btn.Height = 50;
-                btn.FlatStyle = FlatStyle.Flat;
-                btn.BackColor = System.Drawing.Color.White;
-                sidebar.Controls.Add(btn);
+                conn.Open();
+
+                string createTable = @"CREATE TABLE IF NOT EXISTS buku (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    judul TEXT,
+                    penulis TEXT,
+                    penerbit TEXT,
+                    tahun TEXT,
+                    isbn TEXT,
+                    deskripsi TEXT
+                )";
+
+                using (SQLiteCommand cmd = new SQLiteCommand(createTable, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+
+                string query;
+                if (selectedId == -1)
+                {
+                    query = @"INSERT INTO buku (judul, penulis, penerbit, tahun, isbn, deskripsi) 
+                             VALUES (@judul, @penulis, @penerbit, @tahun, @isbn, @deskripsi)";
+                }
+                else
+                {
+                    query = @"UPDATE buku SET judul=@judul, penulis=@penulis, penerbit=@penerbit, 
+                             tahun=@tahun, isbn=@isbn, deskripsi=@deskripsi WHERE id=@id";
+                }
+
+                using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@judul", textBox1.Text);
+                    cmd.Parameters.AddWithValue("@penulis", textBox2.Text);
+                    cmd.Parameters.AddWithValue("@penerbit", textBox3.Text);
+                    cmd.Parameters.AddWithValue("@tahun", dateTimePicker1.Value.Year.ToString());
+                    cmd.Parameters.AddWithValue("@isbn", textBox4.Text);
+                    cmd.Parameters.AddWithValue("@deskripsi", richTextBox1.Text);
+                    if (selectedId != -1) cmd.Parameters.AddWithValue("@id", selectedId);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                MessageBox.Show(selectedId == -1 ? "Data berhasil disimpan!" : "Data berhasil diperbarui!");
+
+                selectedId = -1;
+                ClearForm();
+                LoadData();
             }
-            this.Controls.Add(sidebar);
+        }
 
-            // Footer
-            Panel footer = new Panel();
-            footer.BackColor = System.Drawing.Color.Gainsboro;
-            footer.Dock = DockStyle.Bottom;
-            footer.Height = 30;
+        private void LoadData()
+        {
+            string connectionString = "Data Source=database.db;Version=3;";
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
+                conn.Open();
+                string selectQuery = "SELECT * FROM buku";
+                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(selectQuery, conn))
+                {
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dataGridView1.DataSource = dt;
+                }
+                TambahKolomAksi();
+            }
+        }
 
-            Label lblFooter = new Label();
-            lblFooter.Text = "© 2025 - Aplikasi Perpustakaan | Login sebagai: Admin";
-            lblFooter.Dock = DockStyle.Fill;
-            lblFooter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            footer.Controls.Add(lblFooter);
-            this.Controls.Add(footer);
+        private void TambahKolomAksi()
+        {
+            if (dataGridView1.Columns["Edit"] == null)
+            {
+                DataGridViewButtonColumn editBtn = new DataGridViewButtonColumn();
+                editBtn.HeaderText = "Edit";
+                editBtn.Name = "Edit";
+                editBtn.Text = "Edit";
+                editBtn.UseColumnTextForButtonValue = true;
+                dataGridView1.Columns.Add(editBtn);
+            }
+            if (dataGridView1.Columns["Hapus"] == null)
+            {
+                DataGridViewButtonColumn deleteBtn = new DataGridViewButtonColumn();
+                deleteBtn.HeaderText = "Hapus";
+                deleteBtn.Name = "Hapus";
+                deleteBtn.Text = "Hapus";
+                deleteBtn.UseColumnTextForButtonValue = true;
+                dataGridView1.Columns.Add(deleteBtn);
+            }
+        }
 
-            // Main content
-            Panel content = new Panel();
-            content.Dock = DockStyle.Fill;
-            content.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.Controls.Add(content);
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                int id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
+                string connectionString = "Data Source=database.db;Version=3;";
+                if (dataGridView1.Columns[e.ColumnIndex].Name == "Hapus")
+                {
+                    var confirm = MessageBox.Show("Yakin ingin menghapus?", "Konfirmasi", MessageBoxButtons.YesNo);
+                    if (confirm == DialogResult.Yes)
+                    {
+                        using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+                        {
+                            conn.Open();
+                            string deleteQuery = "DELETE FROM buku WHERE id = @id";
+                            using (SQLiteCommand cmd = new SQLiteCommand(deleteQuery, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@id", id);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        LoadData();
+                    }
+                }
+                else if (dataGridView1.Columns[e.ColumnIndex].Name == "Edit")
+                {
+                    selectedId = id;
+                    textBox1.Text = dataGridView1.Rows[e.RowIndex].Cells["judul"].Value.ToString();
+                    textBox2.Text = dataGridView1.Rows[e.RowIndex].Cells["penulis"].Value.ToString();
+                    textBox3.Text = dataGridView1.Rows[e.RowIndex].Cells["penerbit"].Value.ToString();
+                    dateTimePicker1.Value = new DateTime(int.Parse(dataGridView1.Rows[e.RowIndex].Cells["tahun"].Value.ToString()), 1, 1);
+                    textBox4.Text = dataGridView1.Rows[e.RowIndex].Cells["isbn"].Value.ToString();
+                    richTextBox1.Text = dataGridView1.Rows[e.RowIndex].Cells["deskripsi"].Value.ToString();
+                }
+            }
+        }
+
+        private void ClearForm()
+        {
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox3.Clear();
+            textBox4.Clear();
+            richTextBox1.Clear();
+            dateTimePicker1.Value = DateTime.Now;
+        }
+
+        // Kosongkan event handler lainnya jika belum digunakan
+        private void label1_Click(object sender, EventArgs e) { }
+        private void label2_Click(object sender, EventArgs e) { }
+        private void label6_Click(object sender, EventArgs e) { }
+        private void label7_Click(object sender, EventArgs e) { }
+        private void textBox2_TextChanged(object sender, EventArgs e) { }
+        private void textBox3_TextChanged(object sender, EventArgs e) { }
+        private void richTextBox1_TextChanged(object sender, EventArgs e) { }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+        //    Form2 form = new Form2();
+        //    form.Show();
+        //    this.Hide();
+        //}
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
